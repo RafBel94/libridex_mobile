@@ -16,7 +16,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: SingleChildScrollView(
         child: Stack(
           children: <Widget>[
-            // Background image
             BgAuth(),
             RegisterForm(),
           ],

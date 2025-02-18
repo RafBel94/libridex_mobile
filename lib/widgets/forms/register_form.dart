@@ -143,8 +143,9 @@ class RegisterFormContainer extends StatelessWidget {
             },
           ),
 
-          const SizedBox(height: 40),
+          const SizedBox(height: 60),
 
+          // Buttons row
           Row(
             children: [
               SizedBox(width: MediaQuery.of(context).size.width * 0.035),
