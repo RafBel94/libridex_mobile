@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:libridex_mobile/actions/action_register.dart';
 import 'package:libridex_mobile/actions/login_action.dart';
+import 'package:libridex_mobile/screens/register_screen.dart';
 
 class FormLogin extends StatefulWidget {
   const FormLogin({super.key});
@@ -62,12 +64,42 @@ class _FormLoginState extends State<FormLogin> {
                       loginAction(context, _emailController.text, _passwordController.text);
                     }
                   },
-                  child: const Text('Login', style: TextStyle(
-                    fontSize: 16,
-                  ),),
+                  child: const Text(
+                    'Login',
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 20,),
-                const Text('Don\'t have an account?')
+                const SizedBox(
+                  height: 30,
+                ),
+
+                const Text("Don't have an account?"),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                // Register button
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 113, 77, 63),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                    onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                    );
+                  },
+                  child: const Text(
+                    'Register',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
               ],
             ),
           ),

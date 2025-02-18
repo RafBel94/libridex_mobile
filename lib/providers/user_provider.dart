@@ -12,6 +12,7 @@ class UserProvider extends ChangeNotifier{
 
   UserProvider(this.tokenService, this.userService);
 
+  // Login user
   Future<void> loginUser(String email, String password) async {
     try {
       ApiResponse loginResponse = await userService.login(email, password);
@@ -23,6 +24,26 @@ class UserProvider extends ChangeNotifier{
         errorMessage = null;
       } else {
         errorMessage = loginResponse.data['errors'] ?? 'Login Failed';
+      }
+    } catch (error) {
+      errorMessage = 'Error: ${error.toString()}';
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  // Register user
+  Future<void> registerUser(String email, String password, String repeatPassword) async {
+    try {
+      ApiResponse loginResponse = await userService.register(email, password, repeatPassword);
+
+      if (!loginResponse.data['error']) {
+        currentUser = User.fromLoginJson(loginResponse.data);
+        tokenService.saveToken(currentUser!.token ?? '');
+
+        errorMessage = null;
+      } else {
+        errorMessage = loginResponse.data['errors'] ?? 'Register Failed';
       }
     } catch (error) {
       errorMessage = 'Error: ${error.toString()}';

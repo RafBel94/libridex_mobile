@@ -1,0 +1,2 @@
+C:/flutter projects/libridex_mobile/android/app/.cxx/Debug/1q498233/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/flutter projects/libridex_mobile/android/app/.cxx/Debug/1q498233/arm64-v8a/CMakeFiles/rebuild_cache.dir
