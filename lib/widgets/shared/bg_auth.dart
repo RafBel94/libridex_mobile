@@ -19,23 +19,23 @@ class BgAuth extends StatelessWidget {
         ),
         Container(
           height: size.height,
-          color: Colors.black.withOpacity(0.25)
+          color: const Color.fromARGB(78, 0, 0, 0)
         ),
-        Positioned(
-          top: size.height * 0.12,
-          left: 0,
-          right: 0,
-          child: const Center(
-            child: Text(
-              'Libridex',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 52,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-        ),
+        // Positioned(
+        //   top: size.height * 0.12,
+        //   left: 0,
+        //   right: 0,
+        //   child: const Center(
+        //     child: Text(
+        //       'Libridex',
+        //       style: TextStyle(
+        //         color: Colors.white,
+        //         fontSize: 52,
+        //         fontWeight: FontWeight.w400,
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
