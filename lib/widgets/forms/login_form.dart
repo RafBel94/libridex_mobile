@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../actions/login_action.dart';
+import 'package:libridex_mobile/actions/login_action.dart';
 
 class FormLogin extends StatefulWidget {
   const FormLogin({super.key});
@@ -11,6 +11,18 @@ class FormLogin extends StatefulWidget {
 class _FormLoginState extends State<FormLogin> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter an email';
+    }
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,32 +36,40 @@ class _FormLoginState extends State<FormLogin> {
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: size.width * 0.15),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const SizedBox(height: 50), // Move the form down
-              const Icon(Icons.account_circle, size: 100),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-              ),
-              const SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () => loginAction(context, _emailController.text, _passwordController.text),
-                child: const Text('Login', style: TextStyle(
-                  fontSize: 16,
-                ),),
-              ),
-              const SizedBox(height: 20,),
-              const Text('Don\'t have an account?')
-            ],
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(height: 50), // Move the form down
+                const Icon(Icons.account_circle, size: 100),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  validator: _validateEmail,
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 40),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      loginAction(context, _emailController.text, _passwordController.text);
+                    }
+                  },
+                  child: const Text('Login', style: TextStyle(
+                    fontSize: 16,
+                  ),),
+                ),
+                const SizedBox(height: 20,),
+                const Text('Don\'t have an account?')
+              ],
+            ),
           ),
         ),
       ),

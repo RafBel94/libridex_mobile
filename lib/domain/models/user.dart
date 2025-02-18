@@ -1,15 +1,22 @@
 class User {
   String email;
-  String password;
-  String repeatPassword;
-  String token;
+  String? password;
+  String? repeatPassword;
+  String? token;
 
   User({
     required this.email,
-    required this.password,
-    required this.repeatPassword,
-    required this.token,
+    this.password,
+    this.repeatPassword,
+    this.token,
   });
 
   //Add factories here
+
+  factory User.fromLoginJson(Map<String, dynamic> json) {
+    return User(
+      email: json['email'],
+      token: json['token'],
+    );
+  }
 }
