@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:libridex_mobile/actions/action_register.dart';
 
-class FormRegister extends StatefulWidget {
-  const FormRegister({super.key});
+class RegisterForm extends StatefulWidget {
+  const RegisterForm({super.key});
 
   @override
-  _FormRegisterState createState() => _FormRegisterState();
+  _RegisterFormState createState() => _RegisterFormState();
 }
 
-class _FormRegisterState extends State<FormRegister> {
+class _RegisterFormState extends State<RegisterForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _rePasswordController = TextEditingController();
