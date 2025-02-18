@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widgets/shared/bg_auth.dart';
-import '../widgets/forms/form_login.dart';
+import '../widgets/forms/login_form.dart';
 
-class ScreenLogin extends StatelessWidget {
-  const ScreenLogin({super.key});
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

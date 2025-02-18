@@ -48,7 +48,7 @@ class _FormLoginState extends State<FormLogin> {
                 ),),
               ),
               const SizedBox(height: 20,),
-              Text("Don't have an account?")
+              const Text('Don\'t have an account?')
             ],
           ),
         ),
