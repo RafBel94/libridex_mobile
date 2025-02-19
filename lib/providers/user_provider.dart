@@ -50,4 +50,11 @@ class UserProvider extends ChangeNotifier{
       notifyListeners();
     }
   }
+
+  // Logout user
+  Future<void> logoutUser() async {
+    currentUser = null;
+    await tokenService.clearToken();
+    notifyListeners();
+  }
 }
