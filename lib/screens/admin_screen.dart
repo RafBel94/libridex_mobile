@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libridex_mobile/providers/book_provider.dart';
 import 'package:provider/provider.dart';
 
 class AdminScreen extends StatefulWidget {
@@ -11,12 +12,17 @@ class AdminScreen extends StatefulWidget {
 class _AdminScreenState extends State<AdminScreen> {
   @override
   Widget build(BuildContext context) {
-  BookProvider bookProvider = context.read<BookProvider>();
-  
+    BookProvider bookProvider = context.read<BookProvider>();
+    bookProvider.fetchBooks();
+    print(bookProvider.books.length);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Admin Panel', style: TextStyle(color: Colors.brown, fontWeight: FontWeight.bold, fontSize: 30)),
+        title: const Text('Admin Panel',
+            style: TextStyle(
+                color: Colors.brown,
+                fontWeight: FontWeight.bold,
+                fontSize: 30)),
         backgroundColor: Colors.white,
         elevation: 10.0,
         surfaceTintColor: Colors.transparent,
@@ -26,7 +32,7 @@ class _AdminScreenState extends State<AdminScreen> {
         ),
       ),
       body: ListView.builder(
-        itemCount: 10,
+        itemCount: bookProvider.books.length,
         itemBuilder: (context, index) {
           return ListTile(
             leading: Icon(Icons.book),
