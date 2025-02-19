@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:libridex_mobile/providers/user_provider.dart';
+import 'package:libridex_mobile/screens/admin_screen.dart';
 import 'package:libridex_mobile/screens/presentation_screen.dart';
 import 'package:libridex_mobile/services/token_service.dart';
 import 'package:libridex_mobile/services/user_service.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
           useMaterial3: true,
         ),
-        home: const PresentationScreen(),
+        home: const AdminScreen(),
       ),
     );
   }
