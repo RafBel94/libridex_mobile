@@ -3,12 +3,14 @@ class User {
   String? password;
   String? repeatPassword;
   String? token;
+  String? role;
 
   User({
     required this.email,
     this.password,
     this.repeatPassword,
     this.token,
+    this.role,
   });
 
   //Add factories here
@@ -16,6 +18,7 @@ class User {
   factory User.fromLoginJson(Map<String, dynamic> json) {
     return User(
       email: json['email'],
+      role: json['role'],
       token: json['token'],
     );
   }
