@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:libridex_mobile/domain/models/http_responses/api_response.dart';
+import 'package:libridex_mobile/domain/models/http_responses/auth_response.dart';
 import 'package:libridex_mobile/domain/models/user.dart';
 import 'package:libridex_mobile/services/token_service.dart';
 import 'package:libridex_mobile/services/user_service.dart';
@@ -15,15 +15,15 @@ class UserProvider extends ChangeNotifier{
   // Login user
   Future<void> loginUser(String email, String password) async {
     try {
-      ApiResponse loginResponse = await userService.login(email, password);
-
-      if (!loginResponse.data['error']) {
+      AuthResponse loginResponse = await userService.login(email, password);
+      print("Success: ${loginResponse.success}");
+      if (loginResponse.success) {
         currentUser = User.fromLoginJson(loginResponse.data);
         tokenService.saveToken(currentUser!.token ?? '');
 
         errorMessage = null;
       } else {
-        errorMessage = loginResponse.data['errors'] ?? 'Login Failed';
+        errorMessage = loginResponse.message[0];
       }
     } catch (error) {
       errorMessage = 'Error: ${error.toString()}';
@@ -35,15 +35,15 @@ class UserProvider extends ChangeNotifier{
   // Register user
   Future<void> registerUser(String email, String password, String repeatPassword) async {
     try {
-      ApiResponse loginResponse = await userService.register(email, password, repeatPassword);
-
-      if (!loginResponse.data['error']) {
+      AuthResponse loginResponse = await userService.register(email, password, repeatPassword);
+      
+      if (loginResponse.success) {
         currentUser = User.fromLoginJson(loginResponse.data);
         tokenService.saveToken(currentUser!.token ?? '');
 
         errorMessage = null;
       } else {
-        errorMessage = loginResponse.data['errors'] ?? 'Register Failed';
+        errorMessage = loginResponse.message[0];
       }
     } catch (error) {
       errorMessage = 'Error: ${error.toString()}';

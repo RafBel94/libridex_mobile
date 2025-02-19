@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:libridex_mobile/screens/catalog_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:libridex_mobile/providers/user_provider.dart';
 
@@ -12,6 +13,9 @@ void loginAction(BuildContext context, String email, String password) async {
       SnackBar(content: Text(userProvider.errorMessage!)),
     );
   } else {
-    Navigator.pushReplacementNamed(context, '/home');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Successfully logged in!')),
+    );
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CatalogScreen()));
   }
 }

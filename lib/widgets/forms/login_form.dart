@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:libridex_mobile/actions/action_register.dart';
 import 'package:libridex_mobile/actions/login_action.dart';
 import 'package:libridex_mobile/screens/register_screen.dart';
 
