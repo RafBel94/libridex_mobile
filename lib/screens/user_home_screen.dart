@@ -17,6 +17,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   void initState() {
     super.initState();
     context.read<BookProvider>().fetchBooks();
+    context
+        .read<BookProvider>()
+        .fetchBooksWithFilters(null, null, null, null, null, null);
   }
 
   @override
@@ -28,7 +31,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Libridex', style: TextStyle(color: Colors.brown, fontSize: 28, fontWeight: FontWeight.bold)),
+          title: const Text('Libridex',
+              style: TextStyle(
+                  color: Colors.brown,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold)),
           centerTitle: true,
           backgroundColor: Colors.white,
           elevation: 0,
@@ -49,12 +56,15 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           children: [
             const Padding(
               padding: EdgeInsets.all(16.0),
-              child: Text('Hello!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              child: Text('Hello!',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             ),
             const Center(
               child: Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Text('Latest Books', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                child: Text('Latest Books',
+                    style:
+                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               ),
             ),
             Expanded(
@@ -77,17 +87,20 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                       final book = books[index];
                       return Card(
                         child: Column(
-                            children: [
+                          children: [
                             Image.network(
                               book.image,
-                              height: mediaQuery.size.height * 0.27,
+                              height: mediaQuery.size.height * 0.2,
                               errorBuilder: (context, error, stackTrace) {
-                              return Image.asset('assets/images/defaultbook.png', height: mediaQuery.size.height * 0.3);
+                                return Image.asset(
+                                    'assets/images/defaultbook.png',
+                                    height: mediaQuery.size.height * 0.3);
                               },
                             ),
                             Text(
                               book.title,
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             Text(book.author),
                           ],
@@ -104,20 +117,26 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const CatalogSearchScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const CatalogSearchScreen()),
                   );
                 },
                 child: Card(
                   child: Column(
                     children: [
-                      Image.asset('assets/images/catalog_image.png', height: mediaQuery.size.height * 0.3), // Placeholder for the image
+                      Image.asset('assets/images/catalog_image.png',
+                          height: mediaQuery.size.height *
+                              0.3), // Placeholder for the image
                       const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('View Our Catalog', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                        child: Text('View Our Catalog',
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold)),
                       ),
                       const Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('Explore our extensive collection of books and find your next read!'),
+                        child: Text(
+                            'Explore our extensive collection of books and find your next read!'),
                       ),
                     ],
                   ),

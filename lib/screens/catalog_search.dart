@@ -56,8 +56,8 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
           _selectedGenres.join(','),
           _selectedAuthors.join(','),
           sortBy,
-          _beforePublishingDate?.toIso8601String(),
-          _afterPublishingDate?.toIso8601String(),
+          _beforePublishingDate?.toIso8601String().split('T')[0],
+          _afterPublishingDate?.toIso8601String().split('T')[0],
           _searchController.text,
         );
   }
