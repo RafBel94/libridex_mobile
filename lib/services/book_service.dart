@@ -40,7 +40,6 @@ class BookService {
         .map((entry) => '${entry.key}=${entry.value}')
         .join('&');
 
-
     final endpoint = '$baseString/search?$queryString';
     final token = await tokenService.getToken();
     final response = await http.get(
