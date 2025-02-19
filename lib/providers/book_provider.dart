@@ -47,6 +47,41 @@ class BookProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // Delete book
+  Future<void> deleteBook(int id) async {
+    try {
+      FetchResponse response = await bookService.deleteBook(id);
+      if(response.success){
+        books.removeWhere((book) => book.id == id);
+        errorMessage = null;
+      } else {
+        errorMessage = response.message[0];
+      }
+    } catch (error) {
+      errorMessage = 'Error: ${error.toString()}';
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  // Update book
+  Future<void> editBook(Book book) async {
+    try {
+      FetchResponse response = await bookService.updateBook(book);
+      if(response.success){
+        final index = books.indexWhere((element) => element.id == book.id);
+        books[index] = book;
+        errorMessage = null;
+      } else {
+        errorMessage = response.message[0];
+      }
+    } catch (error) {
+      errorMessage = 'Error: ${error.toString()}';
+    } finally {
+      notifyListeners();
+    }
+  }
 }
 
 

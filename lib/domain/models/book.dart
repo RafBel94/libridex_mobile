@@ -1,4 +1,5 @@
 class Book {
+  int id;
   String title;
   String author;
   String genre;
@@ -7,6 +8,7 @@ class Book {
   DateTime createdAt;
 
   Book({
+    required this.id,
     required this.title,
     required this.author,
     required this.genre,
@@ -19,6 +21,7 @@ class Book {
 
   factory Book.fromFetchJson(Map<String, dynamic> json) {
     return Book(
+      id: json['id'],
       title: json['title'],
       author: json['author'],
       genre: json['genre'],
@@ -30,6 +33,7 @@ class Book {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'title': title,
       'author': author,
       'genre': genre,
