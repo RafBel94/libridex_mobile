@@ -25,6 +25,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
+    final bookProvider = context.watch<BookProvider>();
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -68,8 +69,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               ),
             ),
             Expanded(
-              child: Consumer<BookProvider>(
-                builder: (context, bookProvider, child) {
+              child: Builder(
+                builder: (context) {
                   if (bookProvider.errorMessage != null) {
                     return Center(child: Text(bookProvider.errorMessage!));
                   }

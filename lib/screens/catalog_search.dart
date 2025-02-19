@@ -77,6 +77,7 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
   @override
   Widget build(BuildContext context) {
     final double maxHeight = MediaQuery.of(context).size.height * 0.15;
+    final bookProvider = context.watch<BookProvider>();
 
     return GestureDetector(
       onTap: () {
@@ -85,7 +86,16 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: const Text('Search Results'),
+            title: const Center(
+            child: Text(
+              'Catalog',
+              style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.brown,
+              fontSize: 24
+              ),
+            ),
+            ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -326,8 +336,8 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
               ),
             ),
             Expanded(
-              child: Consumer<BookProvider>(
-                builder: (context, bookProvider, child) {
+              child: Builder(
+                builder: (context) {
                   if (bookProvider.errorMessage != null) {
                     return Center(child: Text(bookProvider.errorMessage!));
                   }
@@ -403,7 +413,7 @@ class FilterChipWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bookProvider = context.read<BookProvider>();
+    final bookProvider = context.watch<BookProvider>();
     final items = label == 'Genres'
         ? bookProvider.books.map((book) => book.genre).toSet().toList()
         : bookProvider.books.map((book) => book.author).toSet().toList();
