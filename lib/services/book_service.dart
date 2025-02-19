@@ -24,21 +24,7 @@ class BookService {
     return FetchResponse.fromJson(json.decode(response.body));
   }
 
-  // Add book endpoint
-  Future<FetchResponse> addBook(Book book) async {
-    final endpoint = baseString;
-    final token = await tokenService.getToken();
-    final response = await http.post(
-      Uri.parse(endpoint),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(book.toJson()),
-    );
-    return FetchResponse.fromJson(json.decode(response.body));
-  }
-
+  // Search books with filters endpoint
   Future<FetchResponse> fetchBooksWithFilters(String? genres, String? authors, String? sortBy, String? beforePublishingDate, String? afterPublishingDate, String? query) async {
     final queryParams = <String, String?>{
       'genres': genres,
@@ -54,7 +40,8 @@ class BookService {
         .map((entry) => '${entry.key}=${entry.value}')
         .join('&');
 
-    final endpoint = '$baseString?$queryString';
+
+    final endpoint = '$baseString/search?$queryString';
     final token = await tokenService.getToken();
     final response = await http.get(
       Uri.parse(endpoint),
@@ -62,6 +49,50 @@ class BookService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
+    );
+    return FetchResponse.fromJson(json.decode(response.body));
+  }
+
+  // Add book endpoint
+  Future<FetchResponse> addBook(Book book) async {
+    final endpoint = baseString;
+    final token = await tokenService.getToken();
+    final response = await http.post(
+      Uri.parse(endpoint),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(book.toJson()),
+    );
+    return FetchResponse.fromJson(json.decode(response.body));
+  }
+
+  // Delete book endpoint
+  Future<FetchResponse> deleteBook(int id) async {
+    final endpoint = '$baseString/$id';
+    final token = await tokenService.getToken();
+    final response = await http.delete(
+      Uri.parse(endpoint),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    return FetchResponse.fromJson(json.decode(response.body));
+  }
+
+  // Update book endpoint
+  Future<FetchResponse> updateBook(Book book) async {
+    final endpoint = '$baseString/${book.id}';
+    final token = await tokenService.getToken();
+    final response = await http.put(
+      Uri.parse(endpoint),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(book.toJson()),
     );
     return FetchResponse.fromJson(json.decode(response.body));
   }
