@@ -16,7 +16,6 @@ class UserProvider extends ChangeNotifier{
   Future<void> loginUser(String email, String password) async {
     try {
       AuthResponse loginResponse = await userService.login(email, password);
-      print("Success: ${loginResponse.success}");
       if (loginResponse.success) {
         currentUser = User.fromLoginJson(loginResponse.data);
         tokenService.saveToken(currentUser!.token ?? '');

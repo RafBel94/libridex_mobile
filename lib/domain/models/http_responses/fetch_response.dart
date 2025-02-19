@@ -1,7 +1,7 @@
 class FetchResponse {
   final bool success;
   final List<dynamic> data;
-  final List<String> message;
+  final List<dynamic> message;
 
   FetchResponse({required this.success, required this.data, required this.message});
 
