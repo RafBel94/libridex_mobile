@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:libridex_mobile/domain/models/book.dart';
 import 'package:libridex_mobile/providers/book_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:libridex_mobile/widgets/catalog_drawer.dart';
 
 class CatalogSearchScreen extends StatefulWidget {
   const CatalogSearchScreen({super.key});
@@ -111,214 +112,46 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
             ),
           ],
         ),
-        endDrawer: Drawer(
-          child: Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                Container(
-                  color: Colors.brown,
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: const DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.brown,
-                    ),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Text(
-                        'Filters',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Genres',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                      ),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(maxHeight: maxHeight),
-                        child: SingleChildScrollView(
-                          child: FilterChipWidget(
-                            label: 'Genres',
-                            selectedItems: _selectedGenres,
-                            onSelectedItemsChanged: (selectedItems) {
-                              setState(() {
-                                _selectedGenres = selectedItems;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16.0),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Authors',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                      ),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(maxHeight: maxHeight),
-                        child: SingleChildScrollView(
-                          child: FilterChipWidget(
-                            label: 'Authors',
-                            selectedItems: _selectedAuthors,
-                            onSelectedItemsChanged: (selectedItems) {
-                              setState(() {
-                                _selectedAuthors = selectedItems;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16.0),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text('Sort By',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                      ),
-                      Row(
-                        children: [
-                          DropdownButton<String>(
-                            hint: const Text('Field'),
-                            value: _selectedSortField,
-                            isExpanded: false,
-                            items: const [
-                              DropdownMenuItem(
-                                  value: 'title', child: Text('Title')),
-                              DropdownMenuItem(
-                                  value: 'author', child: Text('Author')),
-                              DropdownMenuItem(
-                                  value: 'genre', child: Text('Genre')),
-                              DropdownMenuItem(
-                                  value: 'publishingDate',
-                                  child: Text('Publishing Date')),
-                              DropdownMenuItem(
-                                  value: 'createdAt',
-                                  child: Text('Created At')),
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedSortField = value;
-                              });
-                            },
-                          ),
-                          const SizedBox(width: 8.0),
-                          Expanded(
-                            child: DropdownButton<String>(
-                              hint: const Text('Order'),
-                              value: _selectedSortOrder,
-                              isExpanded: false,
-                              items: const [
-                                DropdownMenuItem(
-                                    value: 'asc', child: Text('Asc.')),
-                                DropdownMenuItem(
-                                    value: 'desc', child: Text('Desc.')),
-                              ],
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedSortOrder = value;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16.0),
-                      Row(
-                        children: [
-                          Text(_beforePublishingDate == null
-                              ? 'YYYY/MM/DD'
-                              : _beforePublishingDate!
-                                  .toLocal()
-                                  .toString()
-                                  .split(' ')[0]),
-                          const SizedBox(width: 8.0),
-                          ElevatedButton(
-                            onPressed: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(1900),
-                                lastDate: DateTime.now(),
-                              );
-                              if (pickedDate != null) {
-                                setState(() {
-                                  _beforePublishingDate = pickedDate.toLocal();
-                                });
-                              }
-                            },
-                            child: const Text('Published Before...'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16.0),
-                      Row(
-                        children: [
-                          Text(_afterPublishingDate == null
-                              ? 'YYYY/MM/DD'
-                              : _afterPublishingDate!
-                                  .toLocal()
-                                  .toString()
-                                  .split(' ')[0]),
-                          const SizedBox(width: 8.0),
-                          ElevatedButton(
-                            onPressed: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(1900),
-                                lastDate: DateTime.now(),
-                              );
-                              if (pickedDate != null) {
-                                setState(() {
-                                  _afterPublishingDate = pickedDate.toLocal();
-                                });
-                              }
-                            },
-                            child: const Text('Published After...'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    _applyFilters();
-                    FocusScope.of(context).unfocus();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.brown,
-                  ),
-                  child: const Text('Apply Filters'),
-                ),
-                const SizedBox(height: 8.0),
-                ElevatedButton(
-                  onPressed: _resetFilters,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.brown,
-                  ),
-                  child: const Text('Reset Filters'),
-                ),
-                const SizedBox(height: 16.0),
-              ],
-            ),
-          ),
+        endDrawer: CatalogDrawer(
+          maxHeight: maxHeight,
+          selectedGenres: _selectedGenres,
+          selectedAuthors: _selectedAuthors,
+          selectedSortField: _selectedSortField,
+          selectedSortOrder: _selectedSortOrder,
+          beforePublishingDate: _beforePublishingDate,
+          afterPublishingDate: _afterPublishingDate,
+          onSelectedGenresChanged: (selectedItems) {
+            setState(() {
+              _selectedGenres = selectedItems;
+            });
+          },
+          onSelectedAuthorsChanged: (selectedItems) {
+            setState(() {
+              _selectedAuthors = selectedItems;
+            });
+          },
+          onSortFieldChanged: (value) {
+            setState(() {
+              _selectedSortField = value;
+            });
+          },
+          onSortOrderChanged: (value) {
+            setState(() {
+              _selectedSortOrder = value;
+            });
+          },
+          onBeforePublishingDateChanged: (pickedDate) {
+            setState(() {
+              _beforePublishingDate = pickedDate;
+            });
+          },
+          onAfterPublishingDateChanged: (pickedDate) {
+            setState(() {
+              _afterPublishingDate = pickedDate;
+            });
+          },
+          onApplyFilters: _applyFilters,
+          onResetFilters: _resetFilters,
         ),
         body: Column(
           children: [
