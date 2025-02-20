@@ -150,6 +150,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: _searchController,
+                autofocus: false,
                 decoration: InputDecoration(
                   hintText: 'Search for a book...',
                   suffixIcon: IconButton(

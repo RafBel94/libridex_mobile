@@ -73,7 +73,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               ),
               SizedBox(
                 height: mediaQuery.size.height *
-                    0.3, // Limita la altura del carrusel de libros
+                    0.3,
                 child: Builder(
                   builder: (context) {
                     if (bookProvider.errorMessage != null) {

@@ -13,7 +13,7 @@ class User {
     this.role,
   });
 
-  //Add factories here
+  //Factories
 
   factory User.fromLoginJson(Map<String, dynamic> json) {
     return User(
