@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:libridex_mobile/domain/models/book.dart';
+import 'package:libridex_mobile/providers/book_provider.dart';
 import 'package:libridex_mobile/widgets/shared/bg_auth.dart';
+import 'package:provider/provider.dart';
 
 class EditBookScreen extends StatefulWidget {
   const EditBookScreen({super.key, required this.book});
@@ -29,7 +31,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
     _imageController = TextEditingController(text: widget.book.image);
     _publishingDateController = TextEditingController(
         text:
-            '${widget.book.publishingDate.day}/${widget.book.publishingDate.month}/${widget.book.publishingDate.year}');
+            '${widget.book.publishingDate.year}-${widget.book.publishingDate.month.toString().padLeft(2, '0')}-${widget.book.publishingDate.day.toString().padLeft(2, '0')}');
   }
 
   @override
@@ -52,13 +54,18 @@ class _EditBookScreenState extends State<EditBookScreen> {
     if (picked != null && picked != widget.book.publishingDate) {
       setState(() {
         _publishingDateController.text =
-            '${picked.day}/${picked.month}/${picked.year}';
+            '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final bookProvider = context.read<BookProvider>();
+    List<String> authors = bookProvider.books.map((book) => book.author).toSet().toList();
+    List<String> genres = bookProvider.books.map((book) => book.genre).toSet().toList();
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -97,6 +104,8 @@ class _EditBookScreenState extends State<EditBookScreen> {
                 key: _formKey,
                 child: ListView(
                   children: [
+
+                    // Image
                     Image.network(
                       height: 180,
                       widget.book.image,
@@ -104,47 +113,109 @@ class _EditBookScreenState extends State<EditBookScreen> {
                         return Image.asset('assets/images/defaultbook.png');
                       },
                     ),
+
+                    // Form
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+
+                          // Title
                           TextFormField(
                             controller: _titleController,
                             decoration:
                                 const InputDecoration(labelText: 'Title'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a title';
+                              }
+                              return null;
+                            },
                             onTapOutside: (event) {
                               FocusScope.of(context).unfocus();
                             },
                           ),
+
                           const SizedBox(height: 20),
-                          TextFormField(
-                            controller: _authorController,
-                            decoration:
-                                const InputDecoration(labelText: 'Author'),
-                            onTapOutside: (event) {
-                              FocusScope.of(context).unfocus();
+
+                          // Author
+                          Consumer<BookProvider>(
+                            builder: (context, bookProvider, child) {
+                              return DropdownButtonFormField<String>(
+                                value: _authorController.text,
+                                decoration: const InputDecoration(labelText: 'Author'),
+                                items: authors.map((author) {
+                                  return DropdownMenuItem<String>(
+                                    value: author,
+                                    child: Text(author),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _authorController.text = value!;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please select an author';
+                                  }
+                                  return null;
+                                },
+                              );
                             },
                           ),
+
                           const SizedBox(height: 20),
-                          TextFormField(
-                            controller: _genreController,
-                            decoration:
-                                const InputDecoration(labelText: 'Genre'),
-                            onTapOutside: (event) {
-                              FocusScope.of(context).unfocus();
+
+                          // Genre
+                          Consumer<BookProvider>(
+                            builder: (context, bookProvider, child) {
+                              return DropdownButtonFormField<String>(
+                                value: _genreController.text,
+                                decoration: const InputDecoration(labelText: 'Genre'),
+                                items: genres.map((genre) {
+                                  return DropdownMenuItem<String>(
+                                    value: genre,
+                                    child: Text(genre),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _genreController.text = value!;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please select an genre';
+                                  }
+                                  return null;
+                                },
+                              );
                             },
                           ),
+
                           const SizedBox(height: 20),
+
+                          // Image URL
                           TextFormField(
                             controller: _imageController,
                             decoration:
                                 const InputDecoration(labelText: 'Image URL'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter an image URL';
+                              }
+                              return null;
+                            },
                             onTapOutside: (event) {
                               FocusScope.of(context).unfocus();
                             },
                           ),
+
                           const SizedBox(height: 20),
+
+                          // Publishing Date
                           TextFormField(
                             controller: _publishingDateController,
                             decoration: const InputDecoration(
@@ -170,7 +241,27 @@ class _EditBookScreenState extends State<EditBookScreen> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.pop(context);
+                            if (_formKey.currentState!.validate()) {
+                              widget.book.title = _titleController.text;
+                              widget.book.author = _authorController.text;
+                              widget.book.genre = _genreController.text;
+                              widget.book.image = _imageController.text;
+                              widget.book.publishingDate = DateTime.parse(_publishingDateController.text);
+
+                              // Formatear la fecha sin la hora
+                              
+                              bookProvider.editBook(widget.book);
+                              if (bookProvider.errorMessage != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(bookProvider.errorMessage!)),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Book updated successfully!")),
+                                );
+                                Navigator.pop(context);
+                              }
+                            }
                           },
                           child: const Text(
                             'Apply Changes',

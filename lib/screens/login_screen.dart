@@ -12,11 +12,13 @@ class LoginScreen extends StatelessWidget {
         FocusScope.of(context).unfocus();
       },
       child: const Scaffold(
-        body: Stack(
-          children: <Widget>[
-            BgAuth(),
-            Center(child: FormLogin()),
-          ],
+        body: SingleChildScrollView(
+          child: Stack(
+            children: <Widget>[
+              BgAuth(),
+              Center(child: FormLogin()),
+            ],
+          ),
         ),
       ),
     );

@@ -40,32 +40,28 @@ class CatalogDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          children: [
-            Container(
+      child: Column(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
               color: Colors.brown,
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.brown,
-                ),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Text(
-                    'Filters',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: const Align(
+              alignment: Alignment.center,
+              child: Text(
+                'Filters',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
             ),
-            Expanded(
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
@@ -75,77 +71,108 @@ class CatalogDrawer extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
-                  ConstrainedBox(
+
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.brown, width: 2.0),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.all(5),
                     constraints: BoxConstraints(maxHeight: maxHeight),
                     child: SingleChildScrollView(
-                      child: FilterChipWidget(
-                        label: 'Genres',
-                        selectedItems: selectedGenres,
-                        onSelectedItemsChanged: onSelectedGenresChanged,
+                      child: Center(
+                        child: FilterChipWidget(
+                          label: 'Genres',
+                          selectedItems: selectedGenres,
+                          onSelectedItemsChanged: onSelectedGenresChanged,
+                        ),
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 16.0),
+
                   const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text('Authors',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
-                  ConstrainedBox(
+
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.brown, width: 2.0),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.all(5),
                     constraints: BoxConstraints(maxHeight: maxHeight),
                     child: SingleChildScrollView(
-                      child: FilterChipWidget(
-                        label: 'Authors',
-                        selectedItems: selectedAuthors,
-                        onSelectedItemsChanged: onSelectedAuthorsChanged,
+                      child: Center(
+                        child: FilterChipWidget(
+                          label: 'Authors',
+                          selectedItems: selectedAuthors,
+                          onSelectedItemsChanged: onSelectedAuthorsChanged,
+                        ),
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 16.0),
+
                   const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text('Sort By',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
-                  Row(
-                    children: [
-                      DropdownButton<String>(
-                        hint: const Text('Field'),
-                        value: selectedSortField,
-                        isExpanded: false,
-                        items: const [
-                          DropdownMenuItem(
-                              value: 'title', child: Text('Title')),
-                          DropdownMenuItem(
-                              value: 'author', child: Text('Author')),
-                          DropdownMenuItem(
-                              value: 'genre', child: Text('Genre')),
-                          DropdownMenuItem(
-                              value: 'publishingDate',
-                              child: Text('Publishing Date')),
-                          DropdownMenuItem(
-                              value: 'createdAt', child: Text('Created At')),
-                        ],
-                        onChanged: onSortFieldChanged,
-                      ),
-                      const SizedBox(width: 8.0),
-                      Expanded(
-                        child: DropdownButton<String>(
-                          hint: const Text('Order'),
-                          value: selectedSortOrder,
+
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.brown, width: 2.0),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.all(5),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        DropdownButton<String>(
+                          hint: const Text('Field'),
+                          value: selectedSortField,
                           isExpanded: false,
                           items: const [
                             DropdownMenuItem(
-                                value: 'asc', child: Text('Asc.')),
+                                value: 'title', child: Text('Title')),
                             DropdownMenuItem(
-                                value: 'desc', child: Text('Desc.')),
+                                value: 'author', child: Text('Author')),
+                            DropdownMenuItem(
+                                value: 'genre', child: Text('Genre')),
+                            DropdownMenuItem(
+                                value: 'publishingDate',
+                                child: Text('Publishing Date')),
+                            DropdownMenuItem(
+                                value: 'createdAt', child: Text('Created At')),
                           ],
-                          onChanged: onSortOrderChanged,
+                          onChanged: onSortFieldChanged,
                         ),
-                      ),
-                    ],
+                    
+                        const SizedBox(width: 8.0),
+                    
+                        Expanded(
+                          child: DropdownButton<String>(
+                            hint: const Text('Order'),
+                            value: selectedSortOrder,
+                            isExpanded: false,
+                            items: const [
+                              DropdownMenuItem(
+                                  value: 'asc', child: Text('Asc.')),
+                              DropdownMenuItem(
+                                  value: 'desc', child: Text('Desc.')),
+                            ],
+                            onChanged: onSortOrderChanged,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16.0),
                   Row(
@@ -202,26 +229,26 @@ class CatalogDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            ElevatedButton(
-              onPressed: onApplyFilters,
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.brown,
-              ),
-              child: const Text('Apply Filters'),
+          ),
+          ElevatedButton(
+            onPressed: onApplyFilters,
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.brown,
             ),
-            const SizedBox(height: 8.0),
-            ElevatedButton(
-              onPressed: onResetFilters,
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.brown,
-              ),
-              child: const Text('Reset Filters'),
+            child: const Text('Apply Filters'),
+          ),
+          const SizedBox(height: 8.0),
+          ElevatedButton(
+            onPressed: onResetFilters,
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.brown,
             ),
-            const SizedBox(height: 16.0),
-          ],
-        ),
+            child: const Text('Reset Filters'),
+          ),
+          const SizedBox(height: 16.0),
+        ],
       ),
     );
   }

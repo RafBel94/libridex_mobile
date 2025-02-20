@@ -3,8 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:libridex_mobile/domain/models/book.dart';
 import 'package:libridex_mobile/providers/book_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:libridex_mobile/providers/user_provider.dart';
+import 'package:libridex_mobile/screens/login_screen.dart';
+import 'package:libridex_mobile/widgets/admin_list_tile.dart';
 import 'package:libridex_mobile/widgets/catalog_drawer.dart';
+import 'package:libridex_mobile/widgets/normal_user_list_tile.dart';
+import 'package:provider/provider.dart';
 
 class CatalogSearchScreen extends StatefulWidget {
   const CatalogSearchScreen({super.key});
@@ -42,43 +46,11 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
     super.dispose();
   }
 
-  _onSearchChanged() {
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 150), () {
-      _applyFilters();
-    });
-  }
-
-  void _applyFilters() {
-    String? sortBy = _selectedSortField != null && _selectedSortOrder != null
-        ? '${_selectedSortField}_$_selectedSortOrder'
-        : null;
-    context.read<BookProvider>().fetchBooksWithFilters(
-          _selectedGenres.join(','),
-          _selectedAuthors.join(','),
-          sortBy,
-          _beforePublishingDate?.toIso8601String().split('T')[0],
-          _afterPublishingDate?.toIso8601String().split('T')[0],
-          _searchController.text,
-        );
-  }
-
-  void _resetFilters() {
-    setState(() {
-      _selectedSortField = 'title';
-      _selectedSortOrder = 'asc';
-      _selectedGenres = [];
-      _selectedAuthors = [];
-      _beforePublishingDate = null;
-      _afterPublishingDate = null;
-    });
-    _applyFilters();
-  }
-
   @override
   Widget build(BuildContext context) {
     final double maxHeight = MediaQuery.of(context).size.height * 0.15;
     final bookProvider = context.watch<BookProvider>();
+    final userProvider = context.read<UserProvider>();
 
     return GestureDetector(
       onTap: () {
@@ -86,23 +58,32 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
       },
       child: Scaffold(
         key: _scaffoldKey,
+
+        // Appbar
         appBar: AppBar(
-            title: const Center(
+            title: Center(
             child: Text(
-              'Catalog',
-              style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.brown,
-              fontSize: 24
+                userProvider.currentUser!.role! == 'ROLE_USER' ? 'Catalog' : 'Admin Catalog',
+                style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.brown,
+                fontSize: 24
+                ),
               ),
             ),
-            ),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
+          leading: context.read<UserProvider>().currentUser!.role! == 'ROLE_USER' ?
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+              : IconButton(
+                onPressed: () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                },
+                icon: const Icon(Icons.logout)
+              ),
           actions: [
             IconButton(
               icon: const Icon(Icons.filter_list),
@@ -111,7 +92,12 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
               },
             ),
           ],
+            elevation: 4.0,
+            shadowColor: Colors.black.withAlpha((0.5 * 255).toInt()),
+            backgroundColor: Colors.white,
         ),
+
+        // Drawer
         endDrawer: CatalogDrawer(
           maxHeight: maxHeight,
           selectedGenres: _selectedGenres,
@@ -153,8 +139,12 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
           onApplyFilters: _applyFilters,
           onResetFilters: _resetFilters,
         ),
+
+        // Scaffold body
         body: Column(
           children: [
+
+            // Search bar
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
@@ -168,6 +158,8 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
                 ),
               ),
             ),
+
+            // Book list
             Expanded(
               child: Builder(
                 builder: (context) {
@@ -185,41 +177,12 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
                     itemCount: books.length,
                     itemBuilder: (context, index) {
                       final book = books[index];
-                      return Card(
-                        child: ListTile(
-                          leading: Image.network(
-                            book.image,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                  'assets/images/defaultbook.png');
-                            },
-                          ),
-                          title: Text(
-                            book.title,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(book.author),
-                            ],
-                          ),
-                          trailing: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                book.genre,
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              Text(
-                                '${book.publishingDate.day}/${book.publishingDate.month}/${book.publishingDate.year}',
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
+
+                      if (userProvider.currentUser!.role! == 'ROLE_USER') {
+                        return NormalUserListTile(book: book);
+                      }
+
+                      return AdminListTile(book: book);
                     },
                   );
                 },
@@ -229,6 +192,39 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
         ),
       ),
     );
+  }
+
+  _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 150), () {
+      _applyFilters();
+    });
+  }
+
+  void _applyFilters() {
+    String? sortBy = _selectedSortField != null && _selectedSortOrder != null
+        ? '${_selectedSortField}_$_selectedSortOrder'
+        : null;
+    context.read<BookProvider>().fetchBooksWithFilters(
+          _selectedGenres.join(','),
+          _selectedAuthors.join(','),
+          sortBy,
+          _beforePublishingDate?.toIso8601String().split('T')[0],
+          _afterPublishingDate?.toIso8601String().split('T')[0],
+          _searchController.text,
+        );
+  }
+
+  void _resetFilters() {
+    setState(() {
+      _selectedSortField = 'title';
+      _selectedSortOrder = 'asc';
+      _selectedGenres = [];
+      _selectedAuthors = [];
+      _beforePublishingDate = null;
+      _afterPublishingDate = null;
+    });
+    _applyFilters();
   }
 }
 

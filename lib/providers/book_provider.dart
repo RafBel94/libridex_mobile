@@ -74,7 +74,7 @@ class BookProvider extends ChangeNotifier {
         books[index] = book;
         errorMessage = null;
       } else {
-        errorMessage = response.message[0];
+        errorMessage = response.message.isNotEmpty ? response.message[0] : 'Unknown error';
       }
     } catch (error) {
       errorMessage = 'Error: ${error.toString()}';
