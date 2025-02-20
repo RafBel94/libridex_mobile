@@ -34,15 +34,12 @@ class UserProvider extends ChangeNotifier{
   // Register user
   Future<void> registerUser(String email, String password, String repeatPassword) async {
     try {
-      AuthResponse loginResponse = await userService.register(email, password, repeatPassword);
+      AuthResponse registerResponse = await userService.register(email, password, repeatPassword);
       
-      if (loginResponse.success) {
-        currentUser = User.fromLoginJson(loginResponse.data);
-        tokenService.saveToken(currentUser!.token ?? '');
-
+      if (registerResponse.success) {
         errorMessage = null;
       } else {
-        errorMessage = loginResponse.message[0];
+        errorMessage = registerResponse.message[0];
       }
     } catch (error) {
       errorMessage = 'Error: ${error.toString()}';
