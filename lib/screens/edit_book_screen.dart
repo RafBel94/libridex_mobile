@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:libridex_mobile/domain/models/book.dart';
+import 'package:libridex_mobile/providers/book_provider.dart';
 import 'package:libridex_mobile/widgets/shared/bg_auth.dart';
+import 'package:provider/provider.dart';
 
 class EditBookScreen extends StatefulWidget {
   const EditBookScreen({super.key, required this.book});
@@ -59,6 +61,9 @@ class _EditBookScreenState extends State<EditBookScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final bookProvider = context.read<BookProvider>();
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -113,6 +118,12 @@ class _EditBookScreenState extends State<EditBookScreen> {
                             controller: _titleController,
                             decoration:
                                 const InputDecoration(labelText: 'Title'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a title';
+                              }
+                              return null;
+                            },
                             onTapOutside: (event) {
                               FocusScope.of(context).unfocus();
                             },
@@ -122,6 +133,12 @@ class _EditBookScreenState extends State<EditBookScreen> {
                             controller: _authorController,
                             decoration:
                                 const InputDecoration(labelText: 'Author'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter an author';
+                              }
+                              return null;
+                            },
                             onTapOutside: (event) {
                               FocusScope.of(context).unfocus();
                             },
@@ -131,6 +148,12 @@ class _EditBookScreenState extends State<EditBookScreen> {
                             controller: _genreController,
                             decoration:
                                 const InputDecoration(labelText: 'Genre'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a genre';
+                              }
+                              return null;
+                            },
                             onTapOutside: (event) {
                               FocusScope.of(context).unfocus();
                             },
@@ -140,6 +163,12 @@ class _EditBookScreenState extends State<EditBookScreen> {
                             controller: _imageController,
                             decoration:
                                 const InputDecoration(labelText: 'Image URL'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter an image URL';
+                              }
+                              return null;
+                            },
                             onTapOutside: (event) {
                               FocusScope.of(context).unfocus();
                             },
@@ -170,7 +199,19 @@ class _EditBookScreenState extends State<EditBookScreen> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.pop(context);
+                            if (_formKey.currentState!.validate()) {
+                              bookProvider.editBook(widget.book);
+                              if (bookProvider.errorMessage != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(bookProvider.errorMessage!)),
+                                );
+                                Navigator.pop(context);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Book updated successfully!")),
+                                );
+                              }
+                            }
                           },
                           child: const Text(
                             'Apply Changes',
