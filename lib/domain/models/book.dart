@@ -33,13 +33,11 @@ class Book {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'title': title,
       'author': author,
       'genre': genre,
-      'publishingDate': publishingDate.toLocal(),
       'image': image,
-      'createdAt': createdAt.toLocal(),
+      'publishingDate': "${publishingDate.year.toString().padLeft(4, '0')}-${publishingDate.month.toString().padLeft(2, '0')}-${publishingDate.day.toString().padLeft(2, '0')}",
     };
   }
 }

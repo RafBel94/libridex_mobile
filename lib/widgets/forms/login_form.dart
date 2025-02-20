@@ -29,81 +29,96 @@ class _FormLoginState extends State<FormLogin> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Center(
-      child: Container(
-        width: size.width,
-        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width * 0.15),
-          child: Form(
-            key: _formKey,
+        child: SizedBox(
+            height: size.height,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                const SizedBox(height: 50), // Move the form down
-                const Icon(Icons.account_circle, size: 100),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  validator: _validateEmail,
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                ),
-                const SizedBox(height: 40),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      loginAction(context, _emailController.text, _passwordController.text);
-                    }
-                  },
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(
-                      fontSize: 16,
+              children: [
+                Container(
+                  width: size.width,
+                  margin: const EdgeInsets.only(top: 40, left: 20, right: 20),
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  decoration: BoxDecoration(
+                    border: const Border(
+                      top: BorderSide(width: 5, color: Colors.brown),
+                      bottom: BorderSide(width: 5, color: Colors.brown),
                     ),
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
                   ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-
-                const Text("Don't have an account?"),
-
-                const SizedBox(
-                  height: 10,
-                ),
-
-                // Register button
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 113, 77, 63),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: size.width * 0.15),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          const SizedBox(height: 50),
+                          const Text("Libridex", style: TextStyle(fontSize: 55, color: Colors.brown)),
+                          const SizedBox(height: 40),
+                          TextFormField(
+                            controller: _emailController,
+                            decoration: const InputDecoration(labelText: 'Email'),
+                            validator: _validateEmail,
+                          ),
+                          const SizedBox(height: 20),
+                          TextField(
+                            controller: _passwordController,
+                            decoration: const InputDecoration(labelText: 'Password'),
+                            obscureText: true,
+                          ),
+                          const SizedBox(height: 50),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onPressed: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                loginAction(context, _emailController.text, _passwordController.text);
+                              }
+                            },
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 50,
+                          ),
+                          const Text("Don't have an account?"),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color.fromARGB(255, 113, 77, 63),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                              );
+                            },
+                            child: const Text(
+                              'Register',
+                              style: TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                    onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                    );
-                  },
-                  child: const Text(
-                    'Register',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),
               ],
-            ),
-          ),
-        ),
-      ),
-    );
+            )));
   }
 }

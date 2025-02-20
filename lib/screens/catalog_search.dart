@@ -7,6 +7,7 @@ import 'package:libridex_mobile/providers/user_provider.dart';
 import 'package:libridex_mobile/screens/login_screen.dart';
 import 'package:libridex_mobile/widgets/admin_list_tile.dart';
 import 'package:libridex_mobile/widgets/catalog_drawer.dart';
+import 'package:libridex_mobile/widgets/normal_user_list_tile.dart';
 import 'package:provider/provider.dart';
 
 class CatalogSearchScreen extends StatefulWidget {
@@ -178,7 +179,7 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
                       final book = books[index];
 
                       if (userProvider.currentUser!.role! == 'ROLE_USER') {
-                        return AdminListTile(book: book);
+                        return NormalUserListTile(book: book);
                       }
 
                       return AdminListTile(book: book);
