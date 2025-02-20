@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:libridex_mobile/providers/user_provider.dart';
-import 'package:libridex_mobile/screens/catalog_search.dart';
+import 'package:libridex_mobile/screens/catalog_screen.dart';
 import 'package:libridex_mobile/screens/user_home_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +24,7 @@ void loginAction(BuildContext context, String email, String password) async {
     if (user.role! == 'ROLE_USER') {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const UserHomeScreen()));
     } else if (user.role! == 'ROLE_ADMIN') {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CatalogSearchScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CatalogScreen()));
     }
   }
 }

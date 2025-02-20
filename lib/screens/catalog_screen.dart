@@ -4,20 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:libridex_mobile/domain/models/book.dart';
 import 'package:libridex_mobile/providers/book_provider.dart';
 import 'package:libridex_mobile/providers/user_provider.dart';
+import 'package:libridex_mobile/screens/book_screen.dart';
 import 'package:libridex_mobile/screens/login_screen.dart';
 import 'package:libridex_mobile/widgets/admin_list_tile.dart';
 import 'package:libridex_mobile/widgets/catalog_drawer.dart';
 import 'package:libridex_mobile/widgets/normal_user_list_tile.dart';
 import 'package:provider/provider.dart';
 
-class CatalogSearchScreen extends StatefulWidget {
-  const CatalogSearchScreen({super.key});
+class CatalogScreen extends StatefulWidget {
+  const CatalogScreen({super.key});
 
   @override
-  _CatalogSearchScreenState createState() => _CatalogSearchScreenState();
+  _CatalogScreenState createState() => _CatalogScreenState();
 }
 
-class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
+class _CatalogScreenState extends State<CatalogScreen> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -179,7 +180,17 @@ class _CatalogSearchScreenState extends State<CatalogSearchScreen> {
                       final book = books[index];
 
                       if (userProvider.currentUser!.role! == 'ROLE_USER') {
-                        return NormalUserListTile(book: book);
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditBookScreen(book: book, editMode: false),
+                              ),
+                            );
+                          },
+                          child: NormalUserListTile(book: book),
+                        );
                       }
 
                       return AdminListTile(book: book);

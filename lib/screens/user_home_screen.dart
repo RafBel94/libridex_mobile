@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:libridex_mobile/domain/models/book.dart';
 import 'package:libridex_mobile/providers/book_provider.dart';
-import 'package:libridex_mobile/screens/catalog_search.dart';
+import 'package:libridex_mobile/screens/catalog_screen.dart';
 import 'package:libridex_mobile/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -143,7 +143,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const CatalogSearchScreen()),
+                          builder: (context) => const CatalogScreen()),
                     );
                   },
                   child: Card(

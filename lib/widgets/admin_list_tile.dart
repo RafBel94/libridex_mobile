@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:libridex_mobile/domain/models/book.dart';
-import 'package:libridex_mobile/screens/edit_book_screen.dart';
+import 'package:libridex_mobile/screens/book_screen.dart';
 import 'package:libridex_mobile/widgets/dialogs/show_delete_book_confirmation.dart';
 
 class AdminListTile extends StatelessWidget {
@@ -25,7 +25,7 @@ class AdminListTile extends StatelessWidget {
           children: [
             SlidableAction(
               onPressed: (context) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => EditBookScreen(book: book)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => EditBookScreen(book: book, editMode: true)));
               },
               backgroundColor: const Color.fromARGB(255, 103, 73, 33),
               foregroundColor: Colors.white,
