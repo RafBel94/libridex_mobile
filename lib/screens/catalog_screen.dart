@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:libridex_mobile/domain/models/book.dart';
 import 'package:libridex_mobile/providers/book_provider.dart';
 import 'package:libridex_mobile/providers/user_provider.dart';
 import 'package:libridex_mobile/screens/book_screen.dart';
-import 'package:libridex_mobile/screens/login_screen.dart';
 import 'package:libridex_mobile/widgets/admin_list_tile.dart';
 import 'package:libridex_mobile/widgets/catalog_drawer.dart';
+import 'package:libridex_mobile/widgets/dialogs/show_logout_confirmation.dart';
 import 'package:libridex_mobile/widgets/normal_user_list_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -34,6 +35,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    context.read<BookProvider>().fetchBooks();
     context
         .read<BookProvider>()
         .fetchBooksWithFilters(null, null, null, null, null, null);
@@ -62,30 +64,50 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
         // Appbar
         appBar: AppBar(
-            title: Center(
+          title: Center(
             child: Text(
-                userProvider.currentUser!.role! == 'ROLE_USER' ? 'Catalog' : 'Admin Catalog',
-                style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.brown,
-                fontSize: 24
-                ),
-              ),
+              userProvider.currentUser!.role! == 'ROLE_USER'
+                  ? 'Catalog'
+                  : 'Admin Catalog',
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.brown,
+                  fontSize: 24),
             ),
-          leading: context.read<UserProvider>().currentUser!.role! == 'ROLE_USER' ?
-              IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-              : IconButton(
-                onPressed: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
-                },
-                icon: const Icon(Icons.logout)
-              ),
+          ),
+          leading:
+              context.read<UserProvider>().currentUser!.role! == 'ROLE_USER'
+                  ? IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    )
+                  : IconButton(
+                      onPressed: () {
+                        showLogoutConfirmation(context);
+                      },
+                      icon: const Icon(Icons.logout)),
           actions: [
+
+            // Add book button
+            if (userProvider.currentUser!.role! == 'ROLE_ADMIN')
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookScreen(
+                      book: Book(id: -1, title: '', author: '', genre: '', publishingDate: DateTime.now(), image: '', createdAt: DateTime.now()),
+                      editMode: true,
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            // Filter button
             IconButton(
               icon: const Icon(Icons.filter_list),
               onPressed: () {
@@ -93,9 +115,9 @@ class _CatalogScreenState extends State<CatalogScreen> {
               },
             ),
           ],
-            elevation: 4.0,
-            shadowColor: Colors.black.withAlpha((0.5 * 255).toInt()),
-            backgroundColor: Colors.white,
+          elevation: 4.0,
+          shadowColor: Colors.black.withAlpha((0.5 * 255).toInt()),
+          backgroundColor: Colors.white,
         ),
 
         // Drawer
@@ -144,13 +166,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
         // Scaffold body
         body: Column(
           children: [
-
             // Search bar
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: _searchController,
-                autofocus: false,
                 decoration: InputDecoration(
                   hintText: 'Search for a book...',
                   suffixIcon: IconButton(
@@ -165,8 +185,9 @@ class _CatalogScreenState extends State<CatalogScreen> {
             Expanded(
               child: Builder(
                 builder: (context) {
-                  if (bookProvider.errorMessage != null) {
-                    return Center(child: Text(bookProvider.errorMessage!));
+                  if (bookProvider.fetchBooksErrorMessage != null) {
+                    return Center(
+                        child: Text(bookProvider.fetchBooksErrorMessage!));
                   }
 
                   List<Book> books = bookProvider.filteredBooks;
@@ -175,27 +196,41 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  return ListView.builder(
-                    itemCount: books.length,
-                    itemBuilder: (context, index) {
-                      final book = books[index];
-
-                      if (userProvider.currentUser!.role! == 'ROLE_USER') {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditBookScreen(book: book, editMode: false),
-                              ),
-                            );
-                          },
-                          child: NormalUserListTile(book: book),
-                        );
-                      }
-
-                      return AdminListTile(book: book);
-                    },
+                  return SlidableAutoCloseBehavior(
+                    child: ListView.builder(
+                      itemCount: books.length,
+                      itemBuilder: (context, index) {
+                        final book = books[index];
+                    
+                        if (userProvider.currentUser!.role! == 'ROLE_USER') {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      BookScreen(book: book, editMode: false),
+                                ),
+                              );
+                            },
+                            child: NormalUserListTile(book: book),
+                          );
+                        } else {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      BookScreen(book: book, editMode: false),
+                                ),
+                              );
+                            },
+                            child: AdminListTile(book: book),
+                          );
+                        }
+                      },
+                    ),
                   );
                 },
               ),

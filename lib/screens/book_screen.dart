@@ -1,4 +1,4 @@
-// ignore_for_file: no_leading_underscores_for_local_identifiers
+// ignore_for_file: no_leading_underscores_for_local_identifiers, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:libridex_mobile/domain/models/book.dart';
@@ -6,16 +6,16 @@ import 'package:libridex_mobile/providers/book_provider.dart';
 import 'package:libridex_mobile/widgets/shared/bg_auth.dart';
 import 'package:provider/provider.dart';
 
-class EditBookScreen extends StatefulWidget {
-  const EditBookScreen({super.key, required this.book, required this.editMode});
+class BookScreen extends StatefulWidget {
+  const BookScreen({super.key, required this.book, required this.editMode});
   final Book book;
   final bool editMode;
 
   @override
-  State<EditBookScreen> createState() => _EditBookScreenState();
+  State<BookScreen> createState() => _BookScreenState();
 }
 
-class _EditBookScreenState extends State<EditBookScreen> {
+class _BookScreenState extends State<BookScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
   late TextEditingController _authorController;
@@ -61,16 +61,25 @@ class _EditBookScreenState extends State<EditBookScreen> {
     }
   }
 
+  String _selectScreenTitle(Book book) {
+    if (widget.book.id == -1) {
+      return 'New Book';
+    } else if (widget.editMode) {
+      return 'Edit Book';
+    } else {
+      return 'View Book';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bookProvider = context.read<BookProvider>();
-    List<String> authors = bookProvider.books.map((book) => book.author).toSet().toList();
     List<String> genres = bookProvider.books.map((book) => book.genre).toSet().toList();
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(widget.editMode ? 'Edit Book' : 'View Book',
+        title: Text(_selectScreenTitle(widget.book),
             style: const TextStyle(
                 color: Colors.brown,
                 fontWeight: FontWeight.bold,
@@ -110,7 +119,9 @@ class _EditBookScreenState extends State<EditBookScreen> {
                       height: 180,
                       widget.book.image,
                       errorBuilder: (context, error, stackTrace) {
-                        return Image.asset('assets/images/defaultbook.png');
+                        return Image.asset(
+                          'assets/images/defaultbook.png',
+                          height: 180);
                       },
                     ),
 
@@ -120,11 +131,12 @@ class _EditBookScreenState extends State<EditBookScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+
                           // Title
                           TextFormField(
                             controller: _titleController,
                             decoration:
-                                const InputDecoration(labelText: 'Title'),
+                                const InputDecoration(labelText: 'Title', hintText: 'Book title', hintStyle: TextStyle(color: Colors.grey)),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a title';
@@ -140,35 +152,18 @@ class _EditBookScreenState extends State<EditBookScreen> {
                           const SizedBox(height: 20),
 
                           // Author
-                          Consumer<BookProvider>(
-                            builder: (context, bookProvider, child) {
-                              return widget.editMode
-                                  ? DropdownButtonFormField<String>(
-                                      value: _authorController.text,
-                                      decoration: const InputDecoration(labelText: 'Author'),
-                                      items: authors.map((author) {
-                                        return DropdownMenuItem<String>(
-                                          value: author,
-                                          child: Text(author),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _authorController.text = value!;
-                                        });
-                                      },
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please select an author';
-                                        }
-                                        return null;
-                                      },
-                                    )
-                                  : TextFormField(
-                                      controller: _authorController,
-                                      decoration: const InputDecoration(labelText: 'Author'),
-                                      readOnly: true,
-                                    );
+                          TextFormField(
+                            controller: _authorController,
+                            decoration: const InputDecoration(labelText: 'Author'),
+                            readOnly: !widget.editMode,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter an author';
+                              }
+                              return null;
+                            },
+                            onTapOutside: (event) {
+                              FocusScope.of(context).unfocus();
                             },
                           ),
 
@@ -179,8 +174,8 @@ class _EditBookScreenState extends State<EditBookScreen> {
                             builder: (context, bookProvider, child) {
                               return widget.editMode
                                   ? DropdownButtonFormField<String>(
-                                      value: _genreController.text,
-                                      decoration: const InputDecoration(labelText: 'Genre'),
+                                      value: _genreController.text == '' ? null : _genreController.text,
+                                      decoration: const InputDecoration(labelText: 'Genre', hintText: 'Select a genre', hintStyle: TextStyle(color: Colors.grey)),
                                       items: genres.map((genre) {
                                         return DropdownMenuItem<String>(
                                           value: genre,
@@ -213,11 +208,13 @@ class _EditBookScreenState extends State<EditBookScreen> {
                           TextFormField(
                             controller: _imageController,
                             decoration:
-                                const InputDecoration(labelText: 'Image URL'),
+                                const InputDecoration(labelText: 'Image URL', hintText: 'Enter image URL (Link)', hintStyle: TextStyle(color: Colors.grey)),
                             validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter an image URL';
-                              }
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter an image URL';
+                                } else if (!RegExp(r'^(https?|ftp)://[^\s/$.?#].[^\s]*$').hasMatch(value)) {
+                                  return 'Please enter a valid URL';
+                                }
                               return null;
                             },
                             readOnly: !widget.editMode,
@@ -232,18 +229,22 @@ class _EditBookScreenState extends State<EditBookScreen> {
                           TextFormField(
                             controller: _publishingDateController,
                             decoration: const InputDecoration(
-                                labelText: 'Publishing Date'),
+                                labelText: 'Publishing Date', hintText: 'Book publishing date', hintStyle: TextStyle(color: Colors.grey)),
                             readOnly: true,
                             onTap: () => _selectDate(context),
                           ),
                         ],
                       ),
                     ),
+
                     const SizedBox(height: 40),
+
+                    // Buttons
                     if (widget.editMode)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
+
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
@@ -256,30 +257,15 @@ class _EditBookScreenState extends State<EditBookScreen> {
                             ),
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                widget.book.title = _titleController.text;
-                                widget.book.author = _authorController.text;
-                                widget.book.genre = _genreController.text;
-                                widget.book.image = _imageController.text;
-                                widget.book.publishingDate = DateTime.parse(_publishingDateController.text);
-
-                                bookProvider.editBook(widget.book);
-                                if (bookProvider.errorMessage != null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(bookProvider.errorMessage!)),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text("Book updated successfully!")),
-                                  );
-                                  Navigator.pop(context);
-                                }
+                                widget.book.id == -1 ? _addBook(widget.book, bookProvider) : _updateBook(widget.book, bookProvider);
                               }
                             },
-                            child: const Text(
-                              'Apply Changes',
-                              style: TextStyle(fontSize: 16, color: Colors.white),
+                            child: Text(
+                              widget.book.id == -1 ? 'Create Book' : 'Update Book',
+                              style: const TextStyle(fontSize: 16, color: Colors.white),
                             ),
                           ),
+                          
                         ],
                       ),
                   ],
@@ -290,5 +276,50 @@ class _EditBookScreenState extends State<EditBookScreen> {
         ],
       ),
     );
+  }
+
+  void _updateBook(Book book, BookProvider bookProvider) {
+    widget.book.title = _titleController.text;
+    widget.book.author = _authorController.text;
+    widget.book.genre = _genreController.text;
+    widget.book.image = _imageController.text;
+    widget.book.publishingDate = DateTime.parse(_publishingDateController.text);
+
+    bookProvider.editBook(widget.book);
+    if (bookProvider.errorMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(bookProvider.errorMessage!)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Book updated successfully!")),
+      );
+      Navigator.pop(context);
+    }
+  }
+
+  void _addBook(Book book, BookProvider bookProvider) async {
+    Book newBook = Book(
+      id: -1,
+      title: _titleController.text,
+      author: _authorController.text,
+      genre: _genreController.text,
+      image: _imageController.text,
+      publishingDate: DateTime.parse(_publishingDateController.text),
+      createdAt: DateTime.now()
+    );
+
+    await bookProvider.addBook(newBook);
+    await bookProvider.fetchBooksWithFilters(null, null, null, null, null, null);
+    if (bookProvider.errorMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(bookProvider.errorMessage!)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Book created successfully!")),
+      );
+      Navigator.pop(context);
+    }
   }
 }
