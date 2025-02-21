@@ -25,7 +25,7 @@ class AdminListTile extends StatelessWidget {
           children: [
             SlidableAction(
               onPressed: (context) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => EditBookScreen(book: book, editMode: true)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => BookScreen(book: book, editMode: true)));
               },
               backgroundColor: const Color.fromARGB(255, 103, 73, 33),
               foregroundColor: Colors.white,

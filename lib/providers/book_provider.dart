@@ -8,6 +8,7 @@ class BookProvider extends ChangeNotifier {
   List<Book> books = [];
   List<Book> filteredBooks = [];
   String? errorMessage;
+  String? fetchBooksErrorMessage;
 
   BookProvider(this.bookService);
 
@@ -20,12 +21,12 @@ class BookProvider extends ChangeNotifier {
       FetchResponse response = await bookService.fetchBooks();
       if(response.success){
         books = response.data.map((book) => Book.fromFetchJson(book)).toList();
-        errorMessage = null;
+        fetchBooksErrorMessage = null;
       } else {
-        errorMessage = response.message[0];
+        fetchBooksErrorMessage = response.message[0];
       }
     } catch (error) {
-      errorMessage = 'Error: ${error.toString()}';
+      fetchBooksErrorMessage = 'Error: ${error.toString()}';
     } finally {
       notifyListeners();
     }
@@ -37,12 +38,12 @@ class BookProvider extends ChangeNotifier {
       FetchResponse response = await bookService.fetchBooksWithFilters(genres, authors, sortBy, beforePublishingDate, afterPublishingDate, query);
       if(response.success){
         filteredBooks = response.data.map((book) => Book.fromFetchJson(book)).toList();
-        errorMessage = null;
+        fetchBooksErrorMessage = null;
       } else {
-        errorMessage = response.message[0];
+        fetchBooksErrorMessage = response.message[0];
       }
     } catch (error) {
-      errorMessage = 'Error: ${error.toString()}';
+      fetchBooksErrorMessage = 'Error: ${error.toString()}';
     } finally {
       notifyListeners();
     }
@@ -70,8 +71,24 @@ class BookProvider extends ChangeNotifier {
     try {
       FetchResponse response = await bookService.updateBook(book);
       if(response.success){
-        final index = books.indexWhere((element) => element.id == book.id);
-        books[index] = book;
+        fetchBooks();
+        errorMessage = null;
+      } else {
+        errorMessage = response.message.isNotEmpty ? response.message[0] : 'Unknown error';
+      }
+    } catch (error) {
+      errorMessage = 'Error: ${error.toString()}';
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  // Add book
+  Future<void> addBook(Book book) async {
+    try {
+      FetchResponse response = await bookService.addBook(book);
+      if(response.success){
+        books.add(book);
         errorMessage = null;
       } else {
         errorMessage = response.message.isNotEmpty ? response.message[0] : 'Unknown error';

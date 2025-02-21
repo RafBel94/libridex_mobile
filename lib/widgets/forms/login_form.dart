@@ -13,6 +13,8 @@ class _FormLoginState extends State<FormLogin> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _obscureText = true;
+  bool _isPasswordFieldFocused = false;
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
@@ -63,10 +65,31 @@ class _FormLoginState extends State<FormLogin> {
                             validator: _validateEmail,
                           ),
                           const SizedBox(height: 20),
-                          TextField(
-                            controller: _passwordController,
-                            decoration: const InputDecoration(labelText: 'Password'),
-                            obscureText: true,
+                          Focus(
+                            onFocusChange: (hasFocus) {
+                              setState(() {
+                                _isPasswordFieldFocused = hasFocus;
+                              });
+                            },
+                            child: TextFormField(
+                              controller: _passwordController,
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                suffixIcon: _isPasswordFieldFocused
+                                    ? IconButton(
+                                        icon: Icon(
+                                          _obscureText ? Icons.visibility : Icons.visibility_off,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _obscureText = !_obscureText;
+                                          });
+                                        },
+                                      )
+                                    : null,
+                              ),
+                              obscureText: _obscureText,
+                            ),
                           ),
                           const SizedBox(height: 50),
                           ElevatedButton(

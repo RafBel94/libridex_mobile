@@ -10,7 +10,6 @@ void loginAction(BuildContext context, String email, String password) async {
   final userProvider = context.read<UserProvider>();
 
   await userProvider.loginUser(email, password);
-  final user = userProvider.currentUser!;
 
   if (userProvider.errorMessage != null) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -21,9 +20,9 @@ void loginAction(BuildContext context, String email, String password) async {
       const SnackBar(content: Text('Successfully logged in!')),
     );
 
-    if (user.role! == 'ROLE_USER') {
+    if (context.read<UserProvider>().currentUser!.role! == 'ROLE_USER') {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const UserHomeScreen()));
-    } else if (user.role! == 'ROLE_ADMIN') {
+    } else if (context.read<UserProvider>().currentUser!.role! == 'ROLE_ADMIN') {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const CatalogScreen()));
     }
   }

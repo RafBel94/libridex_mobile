@@ -54,7 +54,7 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 }
 
-class RegisterFormContainer extends StatelessWidget {
+class RegisterFormContainer extends StatefulWidget {
   const RegisterFormContainer({
     super.key,
     required GlobalKey<FormState> formKey,
@@ -72,9 +72,19 @@ class RegisterFormContainer extends StatelessWidget {
   final TextEditingController _rePasswordController;
 
   @override
+  State<RegisterFormContainer> createState() => _RegisterFormContainerState();
+}
+
+class _RegisterFormContainerState extends State<RegisterFormContainer> {
+  bool _obscurePasswordText = true;
+  bool _obscureRePasswordText = true;
+  bool _isPasswordFieldFocused = false;
+  bool _isRePasswordFieldFocused = false;
+
+  @override
   Widget build(BuildContext context) {
     return Form(
-      key: _formKey,
+      key: widget._formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -90,7 +100,7 @@ class RegisterFormContainer extends StatelessWidget {
 
           // Email field
           TextFormField(
-            controller: _emailController,
+            controller: widget._emailController,
             decoration: const InputDecoration(labelText: 'Email'),
             keyboardType: TextInputType.emailAddress,
             onTapOutside: (event) => FocusScope.of(context).unfocus(),
@@ -108,39 +118,81 @@ class RegisterFormContainer extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Password field
-          TextFormField(
-            controller: _passwordController,
-            decoration: const InputDecoration(labelText: 'Password'),
-            onTapOutside: (event) => FocusScope.of(context).unfocus(),
-            obscureText: true,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter your password';
-              }
-              if (value.length < 6) {
-                return 'Password must be at least 6 characters long';
-              }
-              return null;
+          Focus(
+            onFocusChange: (hasFocus) {
+              setState(() {
+                _isPasswordFieldFocused = hasFocus;
+              });
             },
+            child: TextFormField(
+              controller: widget._passwordController,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                suffixIcon: _isPasswordFieldFocused
+                    ? IconButton(
+                        icon: Icon(
+                          _obscurePasswordText ? Icons.visibility : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePasswordText = !_obscurePasswordText;
+                          });
+                        },
+                      )
+                    : null,
+              ),
+              onTapOutside: (event) => FocusScope.of(context).unfocus(),
+              obscureText: _obscurePasswordText,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your password';
+                }
+                if (value.length < 6) {
+                  return 'Password must be at least 6 characters long';
+                }
+                return null;
+              },
+            ),
           ),
 
           const SizedBox(height: 20),
 
           // Repeat password field
-          TextFormField(
-            controller: _rePasswordController,
-            decoration: const InputDecoration(labelText: 'Repeat password'),
-            onTapOutside: (event) => FocusScope.of(context).unfocus(),
-            obscureText: true,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please repeat your password';
-              }
-              if (value != _passwordController.text) {
-                return 'Passwords do not match';
-              }
-              return null;
+          Focus(
+            onFocusChange: (hasFocus) {
+              setState(() {
+                _isRePasswordFieldFocused = hasFocus;
+              });
             },
+            child: TextFormField(
+              controller: widget._rePasswordController,
+              decoration: InputDecoration(
+                labelText: 'Repeat password',
+                suffixIcon: _isRePasswordFieldFocused
+                    ? IconButton(
+                        icon: Icon(
+                          _obscureRePasswordText ? Icons.visibility : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureRePasswordText = !_obscureRePasswordText;
+                          });
+                        },
+                      )
+                    : null,
+              ),
+              onTapOutside: (event) => FocusScope.of(context).unfocus(),
+              obscureText: _obscureRePasswordText,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please repeat your password';
+                }
+                if (value != widget._passwordController.text) {
+                  return 'Passwords do not match';
+                }
+                return null;
+              },
+            ),
           ),
 
           const SizedBox(height: 60),
@@ -180,8 +232,8 @@ class RegisterFormContainer extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    registerAction(context, _emailController.text, _passwordController.text, _rePasswordController.text);
+                  if (widget._formKey.currentState!.validate()) {
+                    registerAction(context, widget._emailController.text, widget._passwordController.text, widget._rePasswordController.text);
                   }
                 },
                 child: const Text(

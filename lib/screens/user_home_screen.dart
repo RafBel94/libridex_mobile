@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:libridex_mobile/domain/models/book.dart';
 import 'package:libridex_mobile/providers/book_provider.dart';
+import 'package:libridex_mobile/providers/user_provider.dart';
 import 'package:libridex_mobile/screens/catalog_screen.dart';
 import 'package:libridex_mobile/screens/login_screen.dart';
+import 'package:libridex_mobile/widgets/dialogs/show_logout_confirmation.dart';
 import 'package:provider/provider.dart';
 
 class UserHomeScreen extends StatefulWidget {
@@ -45,10 +47,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             IconButton(
               icon: const Icon(Icons.logout, color: Colors.brown),
               onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
+                showLogoutConfirmation(context);
               },
             ),
           ],
@@ -57,12 +56,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text('Hello!',
-                    style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              ),
               const Center(
                 child: Padding(
                   padding: EdgeInsets.all(16.0),
@@ -76,8 +69,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     0.3,
                 child: Builder(
                   builder: (context) {
-                    if (bookProvider.errorMessage != null) {
-                      return Center(child: Text(bookProvider.errorMessage!));
+                    if (bookProvider.fetchBooksErrorMessage != null) {
+                      return Center(child: Text(bookProvider.fetchBooksErrorMessage!));
                     }
 
                     List<Book> books = bookProvider.books.take(6).toList();
@@ -136,6 +129,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   },
                 ),
               ),
+
+              // Catalog card
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: GestureDetector(
@@ -147,26 +142,35 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     );
                   },
                   child: Card(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/images/catalog_image.png',
-                          height: mediaQuery.size.height * 0.25,
-                          fit: BoxFit.cover,
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('View Our Catalog',
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold)),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                              'Explore our extensive collection of books and find your next read!'),
-                        ),
-                      ],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+
+                          // Image
+                          Image.asset(
+                            'assets/images/catalog_image.png',
+                            fit: BoxFit.fitHeight,
+                          ),
+
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text('View Our Catalog',
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold)),
+                          ),
+                          
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                                'Explore our extensive collection of books and find your next read!'),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

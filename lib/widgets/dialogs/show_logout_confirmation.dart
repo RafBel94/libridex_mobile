@@ -1,23 +1,23 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:libridex_mobile/domain/models/book.dart';
-import 'package:libridex_mobile/providers/book_provider.dart';
+import 'package:libridex_mobile/providers/user_provider.dart';
+import 'package:libridex_mobile/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
-void showDeleteBookConfirmation(BuildContext context, Book book) {
+void showLogoutConfirmation(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('Delete'),
-        content: const Text('Do you really want to delete this book?'),
+        title: const Text('Logout'),
+        content: const Text('Do you really want to logout?'),
         actions: [
           TextButton(
             onPressed: () async {
-              await context.read<BookProvider>().deleteBook(book.id);
-              await context.read<BookProvider>().fetchBooksWithFilters(null,null,null,null,null,null);
+              await context.read<UserProvider>().logoutUser();
               Navigator.of(context).pop();
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
             },
             child: const Text('Yes'),
           ),
