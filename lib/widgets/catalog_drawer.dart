@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:libridex_mobile/screens/catalog_search.dart';
+import 'package:libridex_mobile/screens/catalog_screen.dart';
 
 class CatalogDrawer extends StatelessWidget {
   final double maxHeight;

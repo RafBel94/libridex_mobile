@@ -17,7 +17,7 @@ class Book {
     required this.createdAt,
   });
 
-  //Add factories here
+  // Factories
 
   factory Book.fromFetchJson(Map<String, dynamic> json) {
     return Book(
